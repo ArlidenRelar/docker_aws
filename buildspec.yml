@@ -16,6 +16,6 @@ phases:
       - chmod +x deploy.sh
       - ./deploy.sh
 
-  artifacts:
-    files:
-      - '**/*'
+artifacts:
+  files:
+    - '**/*'
