@@ -1,0 +1,17 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "FixArtifactsAccess",
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetObject",
+				"s3:GetObjectVersion",
+				"s3:ListBucket"
+			],
+			"Resource": [
+				"arn:aws:s3:::codepipeline-us-east-1-315bd4581a71-4fe6-8ddd-763e1ca5c661",
+				"arn:aws:s3:::codepipeline-us-east-1-315bd4581a71-4fe6-8ddd-763e1ca5c661/*"
+			]
+		}
+	]
