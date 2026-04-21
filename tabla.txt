@@ -1,1 +1,50 @@
-import boto3from boto3.dynamodb.conditions import Key# Conexión a serviciosdynamo = boto3.resource('dynamodb')s3 = boto3.client('s3')# Tablatabla = dynamo.Table('Archivos')# Inputs (para hacerlo dinámico en clase)formato = input("Formato (ej: Imagen): ")nombre = input("Nombre del archivo (ej: Michael.jpg): ")# ?? Buscar en DynamoDBresp = tabla.get_item(    Key={        'Formato': formato,        'Nombre': nombre    })# Validar existenciaif 'Item' not in resp:    print("No se encontró el registro en DynamoDB")    exit()item = resp['Item']print("\n Registro encontrado:")print(item)# Manejo de mayúsculas/minúsculas en bucketbucket = item.get('bucket') or item.get('Bucket')if not bucket:    print("El registro no tiene campo 'bucket'")    exit()archivo = item.get('Nombre') or item.get('nombre')# Descargar desde S3try:    s3.download_file(bucket, archivo, archivo)    print(f"\n?? Archivo descargado correctamente: {archivo}")except Exception as e:    print("\nError al descargar desde S3:")    print(e)
+import boto3
+from boto3.dynamodb.conditions import Key
+
+# Conexion a servicios
+dynamo = boto3.resource('dynamodb')
+s3 = boto3.client('s3')
+
+# Tabla
+tabla = dynamo.Table('Archivos')
+
+# Inputs (para hacerlo dinamico)
+formato = input("Formato (ej: Imagen): ")
+nombre = input("Nombre del archivo (ej: Michael.jpg): ")
+
+# Buscar en DynamoDB
+resp = tabla.get_item(
+    Key={
+        'Formato': formato,
+        'Nombre': nombre
+    }
+)
+
+# Validar existencia
+if 'Item' not in resp:
+    print("No se encontr‚Äî el registro en DynamoDB")
+    exit()
+
+item = resp['Item']
+
+print("\n Registro encontrado:")
+print(item)
+
+# Manejo de may≈ìsculas/min≈ìsculas en bucket
+bucket = item.get('bucket') or item.get('Bucket')
+
+if not bucket:
+    print("El registro no tiene campo 'bucket'")
+    exit()
+
+archivo = item.get('Nombre') or item.get('nombre')
+
+# Descargar desde S3
+try:
+    s3.download_file(bucket, archivo, archivo)
+    print(f"\n Archivo descargado correctamente: {archivo}")
+except Exception as e:
+    print("\nError al descargar desde S3:")
+    print(e)
+
+
