@@ -1,0 +1,37 @@
+import json
+import boto3
+import urllib.request
+import time
+from decimal import Decimal
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('Sesor_DHT11')
+
+def lambda_handler(event, context):
+
+    url = "https://api.thingspeak.com/channels/3369052/feeds.json?api_key=7Z7NCJ6GDNIC6DAJ&results=1"
+
+    response = urllib.request.urlopen(url)
+    data = json.loads(response.read())
+
+    feed = data["feeds"][0]
+
+    #temperature = Decimal(str(feed["field1"]))
+    #humidity = Decimal(str(feed["field2"]))
+
+    temperature = Decimal(feed["field1"] or 0)
+    humidity = Decimal(feed["field2"] or 0)
+
+    table.put_item(
+        Item={
+            "id": "ESP01",
+            "timeStamp": str(int(time.time())),
+            "temperature": temperature,
+            "humidity": humidity
+        }
+    )
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps("Guardado en DynamoDB")
+    }
